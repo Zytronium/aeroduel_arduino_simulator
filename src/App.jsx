@@ -22,6 +22,8 @@ const ESP32Simulator = () => {
 
   const [serverUrl] = useState('http://aeroduel.local:45045');
   const [logs, setLogs] = useState([]);
+  const [debugData, setDebugData] = useState(null);
+  const [showDebug, setShowDebug] = useState(false);
 
   const addLog = (plane, message, type = 'info') => {
     const timestamp = new Date().toLocaleTimeString();
@@ -117,6 +119,30 @@ const ESP32Simulator = () => {
     }
   };
 
+  const fetchMatchState = async () => {
+    try {
+      const response = await fetch(`${serverUrl}/api/match`);
+      const data = await response.json();
+      setDebugData({ type: 'Match State', data });
+      setShowDebug(true);
+      addLog('Debug', 'Fetched match state', 'info');
+    } catch (error) {
+      addLog('Debug', `Failed to fetch match state: ${error.message}`, 'error');
+    }
+  };
+
+  const fetchPlanes = async () => {
+    try {
+      const response = await fetch(`${serverUrl}/api/planes`);
+      const data = await response.json();
+      setDebugData({ type: 'Online Planes', data });
+      setShowDebug(true);
+      addLog('Debug', 'Fetched planes list', 'info');
+    } catch (error) {
+      addLog('Debug', `Failed to fetch planes: ${error.message}`, 'error');
+    }
+  };
+
   const PlaneControl = ({ planeNum, plane, setPlane }) => {
     const targetNum = planeNum === 1 ? 2 : 1;
 
@@ -204,6 +230,41 @@ const ESP32Simulator = () => {
           <PlaneControl planeNum={1} plane={plane1} setPlane={setPlane1} />
           <PlaneControl planeNum={2} plane={plane2} setPlane={setPlane2} />
         </div>
+
+        <div className="bg-white rounded-lg shadow-lg p-6 border-2 border-gray-200 mb-8">
+          <h3 className="text-xl font-bold text-gray-800 mb-4">Debug Tools</h3>
+          <div className="flex gap-4">
+            <button
+              onClick={fetchMatchState}
+              className="flex-1 px-4 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors"
+            >
+              View Match State
+            </button>
+            <button
+              onClick={fetchPlanes}
+              className="flex-1 px-4 py-3 bg-teal-600 text-white rounded-lg font-medium hover:bg-teal-700 transition-colors"
+            >
+              View Online Planes
+            </button>
+          </div>
+        </div>
+
+        {showDebug && debugData && (
+          <div className="bg-white rounded-lg shadow-lg p-6 border-2 border-indigo-200 mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-gray-800">{debugData.type}</h3>
+              <button
+                onClick={() => setShowDebug(false)}
+                className="text-gray-500 hover:text-gray-700 text-2xl leading-none"
+              >
+                ×
+              </button>
+            </div>
+            <pre className="bg-gray-50 p-4 rounded-lg overflow-x-auto text-sm">
+              {JSON.stringify(debugData.data, null, 2)}
+            </pre>
+          </div>
+        )}
 
         <div className="bg-white rounded-lg shadow-lg p-6 border-2 border-gray-200">
           <h3 className="text-xl font-bold text-gray-800 mb-4">Activity Log</h3>
