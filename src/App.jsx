@@ -27,7 +27,7 @@ const ESP32Simulator = () => {
 
   const addLog = (plane, message, type = 'info') => {
     const timestamp = new Date().toLocaleTimeString();
-    setLogs(prev => [...prev, { plane, message, type, timestamp }].slice(-20));
+    setLogs(prev => [{ plane, message, type, timestamp }, ...prev].slice(0, 20));
   };
 
   const handleRegister = async (planeNum) => {
