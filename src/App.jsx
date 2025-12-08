@@ -379,7 +379,7 @@ const ESP32Simulator = () => {
                         }`}
                     >
                         <Power className="w-5 h-5" />
-                        Power Off & Unregister
+                        Power Off
                     </button>
 
                     <button
@@ -399,7 +399,7 @@ const ESP32Simulator = () => {
                         onClick={() => handleTeapot(planeNum)}
                         className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium bg-purple-600 text-white hover:bg-purple-700 transition-colors"
                     >
-                        🫖 Try /api/fire (Teapot)
+                        Activate server-side anti-air turret !!1
                     </button>
                 </div>
             </div>
